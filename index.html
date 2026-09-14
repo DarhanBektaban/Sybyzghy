@@ -6,10 +6,10 @@
     <title>www.sybyzghy.com — Sanandyq Sybyzghy</title>
     <style>
         :root {
-            --bg-color: #080c09;
-            --card-bg: #121a13;
+            --bg-color: #060a07;
+            --card-bg: #0f1610;
             --accent-color: #d4af37;
-            --ornament-hover: #f39c12;
+            --accent-glow: rgba(212, 175, 55, 0.4);
             --text-color: #e2e8f0;
             --secondary-text: #94a3b8;
         }
@@ -35,13 +35,13 @@
 
         .container {
             background-color: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.35);
             border-radius: 24px;
             padding: 25px;
             max-width: 550px;
             width: 94%;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
         }
 
         h1 {
@@ -55,12 +55,13 @@
             color: var(--secondary-text);
             font-size: 0.85rem;
             margin-bottom: 20px;
+            line-height: 1.4;
         }
 
-        /* Sybyzghı sūlbatı / Ojuular konteyneri */
+        /* Sybyzghı sūlbatı paneli */
         .sybyzghy-pipe {
             position: relative;
-            background: linear-gradient(90deg, #1e2b20, #2c3e30, #1e2b20);
+            background: linear-gradient(90deg, #162218, #233325, #162218);
             border: 2px solid var(--accent-color);
             border-radius: 50px;
             height: 90px;
@@ -69,26 +70,25 @@
             justify-content: space-around;
             padding: 0 20px;
             margin-bottom: 25px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 15px rgba(212,175,55,0.2);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 20px var(--accent-glow);
         }
 
-        /* Ärbir ojuu / tesik elementteri */
         .ornament-node {
             width: 45px;
             height: 45px;
-            background-color: rgba(212, 175, 55, 0.15);
+            background-color: rgba(212, 175, 55, 0.1);
             border: 2px dashed var(--accent-color);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             user-select: none;
         }
 
         .ornament-node span {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--accent-color);
             font-weight: bold;
         }
@@ -96,8 +96,8 @@
         .ornament-node:active, .ornament-node.active {
             background-color: var(--accent-color);
             border-style: solid;
-            box-shadow: 0 0 20px var(--accent-color);
-            transform: scale(1.1);
+            box-shadow: 0 0 25px var(--accent-color);
+            transform: scale(1.12);
         }
 
         .ornament-node.active span {
@@ -133,9 +133,8 @@
 
     <div class="container">
         <h1>www.sybyzghy.com</h1>
-        <p>Ūlttyq ojuu-örnekterge tikeley basyp, sybyzghynyñ syrly syryldau ünin zharatyñyz.</p>
+        <p>Taza fizika, obertondıq qonyray äri tau keñistigi jañğyryğy arqyly jūratin sanandyq sybyzghy.</p>
 
-        <!-- Sybyzghı nūsqasındagı ojuular paneli -->
         <div class="sybyzghy-pipe" id="sybyzghyPipe">
             <div class="ornament-node" data-freq="261.63"><span>I</span></div>
             <div class="ornament-node" data-freq="293.66"><span>II</span></div>
@@ -151,35 +150,37 @@
         </div>
 
         <div class="info-box">
-            Birneshe ojuudy qatar basyp, sybyzghynyñ qabatar şyqqan üni men syryldauyn seziñiz.
+            Ojuulardy basıp, tabigi sybyzghynyñ üni men syryldauın tolyq seziñiz.
         </div>
     </div>
 
     <script>
         let audioCtx = null;
         let masterGain = null;
-        let activeNoise = null;
-        let activeNoiseGain = null;
-        let activeVibrato = null;
-        let activeOscillatorsMap = new Map(); // Birneshe ojuu ūstinde birdey dybys üşin
+        let activeOscillatorsMap = new Map();
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Master Gain & Global Noise (Birlikke keltirilgen aua syryldauı)
                 masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
 
-                // Keñistikti jañğyryq (Delay Echo)
+                // Tabigi tauda tartılğanday keñistikti jañğyryq (Delay Echo + Feedback Filter)
                 const delay = audioCtx.createDelay();
-                delay.delayTime.setValueAtTime(0.2, audioCtx.currentTime);
-                const delayGain = audioCtx.createGain();
-                delayGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                delay.delayTime.setValueAtTime(0.22, audioCtx.currentTime);
+                
+                const delayFeedback = audioCtx.createGain();
+                delayFeedback.gain.setValueAtTime(0.3, audioCtx.currentTime); // Jañğyryq qandylyğy
+
+                const delayFilter = audioCtx.createBiquadFilter();
+                delayFilter.type = 'lowpass';
+                delayFilter.frequency.setValueAtTime(1500, audioCtx.currentTime); // Žūmsaq jañğyryq üşin süzgi
 
                 masterGain.connect(delay);
-                delay.connect(delayGain);
-                delayGain.connect(delay);
+                delay.connect(delayFilter);
+                delayFilter.connect(delayFeedback);
+                delayFeedback.connect(delay);
 
                 masterGain.connect(audioCtx.destination);
                 delay.connect(audioCtx.destination);
@@ -191,52 +192,97 @@
 
         function startNote(nodeId, frequency) {
             initAudio();
-            if (activeOscillatorsMap.has(nodeId)) return; // Eger basuvly bolsa
+            if (activeOscillatorsMap.has(nodeId)) return;
 
             const now = audioCtx.currentTime;
 
-            // Obertondar (Triangle + Sines)
-            const freqs = [frequency, frequency * 2, frequency * 3];
-            const gains = [1.0, 0.45, 0.2];
-            let nodeOscillators = [];
+            // Sybyzghyğa tängi terek obertondyq qatar (Sine + Triangleqospasy)
+            const freqs = [frequency, frequency * 2, frequency * 3, frequency * 4];
+            const gains = [1.0, 0.5, 0.22, 0.08];
+            let nodeElements = [];
 
             freqs.forEach((f, idx) => {
                 const osc = audioCtx.createOscillator();
+                // 1-garmonika syryldau üşin sine/triangle, qalğandarı sine
                 osc.type = idx === 0 ? 'triangle' : 'sine';
                 osc.frequency.setValueAtTime(f, now);
 
                 const oscGain = audioCtx.createGain();
                 oscGain.gain.setValueAtTime(0, now);
-                oscGain.gain.linearRampToValueAtTime(gains[idx] * 0.3, now + 0.1);
+                oscGain.gain.linearRampToValueAtTime(gains[idx] * 0.28, now + 0.08);
 
                 osc.connect(oscGain);
                 oscGain.connect(masterGain);
                 osc.start(now);
-                nodeOscillators.push({ osc, gain: oscGain });
+                nodeElements.push({ osc, gain: oscGain });
             });
 
-            activeOscillatorsMap.set(nodeId, nodeOscillators);
+            // 1. Aua syryldauı (Breathy Noise - qūbyr işindegi aua aģyny)
+            const bufferSize = audioCtx.sampleRate * 2;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1);
+            }
+
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(frequency * 1.6, now);
+            noiseFilter.Q.setValueAtTime(6.0, now); // Tarınyñ rezonansy
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0, now);
+            noiseGain.gain.linearRampToValueAtTime(0.06, now + 0.1);
+
+            whiteNoise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(masterGain);
+            whiteNoise.start(now);
+
+            // 2. Tabigi mikrotolqyn (Micro-vibrato jan beru)
+            const vibrato = audioCtx.createOscillator();
+            vibrato.frequency.setValueAtTime(5.8, now);
+            const vibratoGain = audioCtx.createGain();
+            vibratoGain.gain.setValueAtTime(3.8, now);
+            
+            nodeElements.forEach(item => {
+                vibrato.connect(item.osc.frequency);
+            });
+            vibrato.start(now);
+
+            activeOscillatorsMap.set(nodeId, {
+                elements: nodeElements,
+                noise: whiteNoise,
+                noiseGain: noiseGain,
+                vibrato: vibrato
+            });
         }
 
         function stopNote(nodeId) {
             if (activeOscillatorsMap.has(nodeId) && audioCtx) {
                 const now = audioCtx.currentTime;
-                const nodeOscillators = activeOscillatorsMap.get(nodeId);
+                const noteData = activeOscillatorsMap.get(nodeId);
 
-                nodeOscillators.forEach(item => {
-                    item.gain.gain.linearRampToValueAtTime(0.001, now + 0.15);
+                noteData.elements.forEach(item => {
+                    item.gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
                 });
+                noteData.noiseGain.gain.linearRampToValueAtTime(0.001, now + 0.12);
 
                 setTimeout(() => {
-                    nodeOscillators.forEach(item => {
-                        try { item.osc.stop(); } catch(e) {}
-                    });
+                    try {
+                        noteData.elements.forEach(item => item.osc.stop());
+                        noteData.noise.stop();
+                        noteData.vibrato.stop();
+                    } catch(e) {}
                     activeOscillatorsMap.delete(nodeId);
-                }, 160);
+                }, 130);
             }
         }
 
-        // Ojuu (ornament) elementterine tirkew
         document.querySelectorAll('.ornament-node').forEach((node, index) => {
             const freq = parseFloat(node.getAttribute('data-freq'));
             const nodeId = 'node_' + index;
@@ -266,16 +312,14 @@
             });
         });
 
-        // Slider arqyly bar lapyldau/jiilikti basqaru
         const slider = document.getElementById('pitchSlider');
         slider.addEventListener('input', (e) => {
             const baseFreq = parseFloat(e.target.value);
-            // Eger aktivti ojuu bolsa, solardyn jiiligin birdey özgertu
-            activeOscillatorsMap.forEach((nodeOscillators, id) => {
-                const freqs = [baseFreq, baseFreq * 2, baseFreq * 3];
-                nodeOscillators.forEach((item, idx) => {
+            activeOscillatorsMap.forEach((noteData, id) => {
+                const freqs = [baseFreq, baseFreq * 2, baseFreq * 3, baseFreq * 4];
+                noteData.elements.forEach((item, idx) => {
                     if(audioCtx) {
-                        item.osc.frequency.setTargetAtTime(freqs[idx], audioCtx.currentTime, 0.05);
+                        item.osc.frequency.setTargetAtTime(freqs[idx], audioCtx.currentTime, 0.04);
                     }
                 });
             });
