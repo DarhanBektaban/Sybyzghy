@@ -9,7 +9,6 @@
             --bg-color: #0b0f0c;
             --card-bg: #141c16;
             --accent-color: #d4af37;
-            --accent-hover: #f1c40f;
             --text-color: #e2e8f0;
             --secondary-text: #94a3b8;
         }
@@ -115,7 +114,7 @@
 
     <div class="container">
         <h1>www.sybyzghy.com</h1>
-        <p>Taza fizika men matematika (Web Audio API) negizinde žūratin sanandyq sybyzghy dybystau qūralı.</p>
+        <p>Taza fizika, obertondar men keñistikti jañğyryq arqyly žūratin sanandyq sybyzghy.</p>
 
         <div class="notes-grid">
             <button class="note-btn" data-freq="261.63">Do (C4)</button>
@@ -132,13 +131,13 @@
         </div>
 
         <div class="info-box">
-            Telefon nemese kompyuter ekranınan batırmalardı basıp, dybystyñ aua reñkin bayqanyz.
+            Telefon nemese kompyuter ekranınan batırmalardı basıp, tabigi sybyzghy ünin tyñdañyz.
         </div>
     </div>
 
     <script>
         let audioCtx = null;
-        let activeOscillator = null;
+        let activeOscillators = [];
         let activeGain = null;
         let activeNoise = null;
         let activeNoiseGain = null;
@@ -155,25 +154,47 @@
 
         function playSybyzghy(frequency) {
             initAudio();
-            stopSybyzghy(); // Būrynghy dybysty toqtatu
+            stopSybyzghy();
 
             const now = audioCtx.currentTime;
 
-            // 1. Negizgi garmonika (Triangle wave)
-            activeOscillator = audioCtx.createOscillator();
-            activeOscillator.type = 'triangle';
-            activeOscillator.frequency.setValueAtTime(frequency, now);
+            // Master Gain (jalpy dybys deñgeji)
+            activeGain = audioCtx.createGain();
+            activeGain.gain.setValueAtTime(0, now);
+            activeGain.gain.linearRampToValueAtTime(0.35, now + 0.12);
 
-            // Vibrato (jan beru)
+            // 1. Obertondar (Multiple Oscillators for rich timbre)
+            const freqs = [frequency, frequency * 2, frequency * 3];
+            const gains = [1.0, 0.4, 0.15];
+            
+            activeOscillators = [];
+            
+            freqs.forEach((f, index) => {
+                const osc = audioCtx.createOscillator();
+                osc.type = index === 0 ? 'triangle' : 'sine';
+                osc.frequency.setValueAtTime(f, now);
+
+                const oscGain = audioCtx.createGain();
+                oscGain.gain.setValueAtTime(gains[index], now);
+                
+                osc.connect(oscGain);
+                oscGain.connect(activeGain);
+                osc.start(now);
+                activeOscillators.push(osc);
+            });
+
+            // Vibrato
             activeVibrato = audioCtx.createOscillator();
-            activeVibrato.frequency.setValueAtTime(5.5, now);
+            activeVibrato.frequency.setValueAtTime(5.2, now);
             const vibratoGain = audioCtx.createGain();
-            vibratoGain.gain.setValueAtTime(4, now);
-            activeVibrato.connect(vibratoGain);
-            vibratoGain.connect(activeOscillator.frequency);
+            vibratoGain.gain.setValueAtTime(3.5, now);
+            
+            activeOscillators.forEach(osc => {
+                vibratoGain.connect(osc.frequency);
+            });
             activeVibrato.start(now);
 
-            // 2. Aua ağynynyñ syryldauı (White Noise + Bandpass Filter)
+            // 2. Aua ağynynyñ syryldauı (White Noise + Dynamic Filter)
             const bufferSize = audioCtx.sampleRate * 3;
             const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const output = noiseBuffer.getChannelData(0);
@@ -187,26 +208,29 @@
 
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(frequency * 1.5, now);
-            filter.Q.setValueAtTime(4.5, now);
-
-            // 3. Gain Envelopes
-            activeGain = audioCtx.createGain();
-            activeGain.gain.setValueAtTime(0, now);
-            activeGain.gain.linearRampToValueAtTime(0.28, now + 0.1);
+            filter.frequency.setValueAtTime(frequency * 1.8, now);
+            filter.Q.setValueAtTime(5.0, now);
 
             activeNoiseGain = audioCtx.createGain();
-            activeNoiseGain.gain.setValueAtTime(0.09, now);
+            activeNoiseGain.gain.setValueAtTime(0.07, now);
 
-            // Baylanystyru
-            activeOscillator.connect(activeGain);
             activeNoise.connect(filter);
             filter.connect(activeNoiseGain);
             activeNoiseGain.connect(activeGain);
-            activeGain.connect(audioCtx.destination);
-
-            activeOscillator.start(now);
             activeNoise.start(now);
+
+            // 3. Keñistikti jañğyryq (Delay Echo)
+            const delay = audioCtx.createDelay();
+            delay.delayTime.setValueAtTime(0.18, now);
+            const delayGain = audioCtx.createGain();
+            delayGain.gain.setValueAtTime(0.2, now);
+
+            activeGain.connect(delay);
+            delay.connect(delayGain);
+            delayGain.connect(delay);
+            
+            activeGain.connect(audioCtx.destination);
+            delay.connect(audioCtx.destination);
         }
 
         function stopSybyzghy() {
@@ -214,15 +238,19 @@
                 const now = audioCtx.currentTime;
                 activeGain.gain.linearRampToValueAtTime(0.001, now + 0.15);
                 setTimeout(() => {
-                    if (activeOscillator) {
-                        try { activeOscillator.stop(); activeNoise.stop(); activeVibrato.stop(); } catch(e) {}
-                        activeOscillator = null;
+                    if (activeOscillators.length > 0) {
+                        try {
+                            activeOscillators.forEach(osc => osc.stop());
+                            if (activeNoise) activeNoise.stop();
+                            if (activeVibrato) activeVibrato.stop();
+                        } catch(e) {}
+                        activeOscillators = [];
                     }
                 }, 160);
             }
         }
 
-        // Mobil jäne kompyuter oqigalary (Touch & Mouse Support)
+        // Event listeners (Touch & Mouse)
         document.querySelectorAll('.note-btn').forEach(btn => {
             const freq = parseFloat(btn.getAttribute('data-freq'));
 
@@ -256,12 +284,15 @@
             });
         });
 
-        // Slider arqyly jiilikti basqaru
+        // Slider control
         const slider = document.getElementById('pitchSlider');
         slider.addEventListener('input', (e) => {
-            if (activeOscillator && audioCtx) {
-                const freq = parseFloat(e.target.value);
-                activeOscillator.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
+            if (activeOscillators.length > 0 && audioCtx) {
+                const baseFreq = parseFloat(e.target.value);
+                const freqs = [baseFreq, baseFreq * 2, baseFreq * 3];
+                activeOscillators.forEach((osc, idx) => {
+                    osc.frequency.setTargetAtTime(freqs[idx], audioCtx.currentTime, 0.05);
+                });
             }
         });
     </script>
