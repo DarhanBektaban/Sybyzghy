@@ -2,15 +2,21 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>www.sybyzghy.com — Sanandyq Sybyzghy</title>
     <style>
         :root {
-            --bg-color: #0f1410;
-            --card-bg: #18221b;
+            --bg-color: #0b0f0c;
+            --card-bg: #141c16;
             --accent-color: #d4af37;
+            --accent-hover: #f1c40f;
             --text-color: #e2e8f0;
             --secondary-text: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -24,68 +30,84 @@
             min-height: 100vh;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         .container {
             background-color: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 600px;
-            width: 90%;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 20px;
+            padding: 30px 20px;
+            max-width: 500px;
+            width: 92%;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
 
         h1 {
             color: var(--accent-color);
-            font-size: 2rem;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            letter-spacing: 1.5px;
         }
 
         p {
             color: var(--secondary-text);
-            font-size: 1rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
 
         .notes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
         .note-btn {
             background-color: transparent;
             border: 2px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 15px 10px;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            padding: 18px 10px;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
+            user-select: none;
         }
 
-        .note-btn:hover {
+        .note-btn:active, .note-btn.active {
             background-color: var(--accent-color);
             color: var(--bg-color);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+            transform: scale(0.96);
         }
 
-        .note-btn:active {
-            transform: translateY(0);
+        .slider-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .slider-label {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--accent-color);
+            cursor: pointer;
         }
 
         .info-box {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--secondary-text);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -93,24 +115,34 @@
 
     <div class="container">
         <h1>www.sybyzghy.com</h1>
-        <p>Eşbir jazba faylsız, taza fizika men matematika (Web Audio API) negizinde júretin sanandyq sybyzghy dybystau qūralı.</p>
+        <p>Taza fizika men matematika (Web Audio API) negizinde žūratin sanandyq sybyzghy dybystau qūralı.</p>
 
         <div class="notes-grid">
-            <button class="note-btn" onclick="playSybyzghy(261.63)">Do (C4)</button>
-            <button class="note-btn" onclick="playSybyzghy(293.66)">Re (D4)</button>
-            <button class="note-btn" onclick="playSybyzghy(329.63)">Mi (E4)</button>
-            <button class="note-btn" onclick="playSybyzghy(392.00)">Sol (G4)</button>
-            <button class="note-btn" onclick="playSybyzghy(440.00)">Lya (A4)</button>
-            <button class="note-btn" onclick="playSybyzghy(523.25)">Do (C5)</button>
+            <button class="note-btn" data-freq="261.63">Do (C4)</button>
+            <button class="note-btn" data-freq="293.66">Re (D4)</button>
+            <button class="note-btn" data-freq="329.63">Mi (E4)</button>
+            <button class="note-btn" data-freq="392.00">Sol (G4)</button>
+            <button class="note-btn" data-freq="440.00">Lya (A4)</button>
+            <button class="note-btn" data-freq="523.25">Do (C5)</button>
+        </div>
+
+        <div class="slider-section">
+            <span class="slider-label">Jiilikti (Pitch) tegis özgertu tisy</span>
+            <input type="range" id="pitchSlider" min="200" max="600" value="440" step="1">
         </div>
 
         <div class="info-box">
-            Tömendegi batırmalardı basıp, sybyzghynyñ aua syryldauı men rezonans alqabın estip köriñiz.
+            Telefon nemese kompyuter ekranınan batırmalardı basıp, dybystyñ aua reñkin bayqanyz.
         </div>
     </div>
 
     <script>
         let audioCtx = null;
+        let activeOscillator = null;
+        let activeGain = null;
+        let activeNoise = null;
+        let activeNoiseGain = null;
+        let activeVibrato = null;
 
         function initAudio() {
             if (!audioCtx) {
@@ -123,61 +155,115 @@
 
         function playSybyzghy(frequency) {
             initAudio();
+            stopSybyzghy(); // Būrynghy dybysty toqtatu
+
             const now = audioCtx.currentTime;
 
-            // 1. Sybyzghynyñ negizgi garmonikalıq üni (Triangle wave - tabigi qonyray ünge jaqın)
-            const osc = audioCtx.createOscillator();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(frequency, now);
+            // 1. Negizgi garmonika (Triangle wave)
+            activeOscillator = audioCtx.createOscillator();
+            activeOscillator.type = 'triangle';
+            activeOscillator.frequency.setValueAtTime(frequency, now);
 
-            // Azdağan vibrato (jan beru üşin)
-            const vibrato = audioCtx.createOscillator();
-            vibrato.frequency.setValueAtTime(5, now); // 5 Hz terbelis
+            // Vibrato (jan beru)
+            activeVibrato = audioCtx.createOscillator();
+            activeVibrato.frequency.setValueAtTime(5.5, now);
             const vibratoGain = audioCtx.createGain();
-            vibratoGain.gain.setValueAtTime(3, now); // terbelis tereñdigi
-            vibrato.connect(osc.frequency);
-            vibrato.start(now);
-            vibrato.stop(now + 2.5);
+            vibratoGain.gain.setValueAtTime(4, now);
+            activeVibrato.connect(vibratoGain);
+            vibratoGain.connect(activeOscillator.frequency);
+            activeVibrato.start(now);
 
-            // 2. Aua ağynynyñ syryldauı (Breathy Noise - White Noise + Bandpass Filter)
-            const bufferSize = audioCtx.sampleRate * 2.5;
+            // 2. Aua ağynynyñ syryldauı (White Noise + Bandpass Filter)
+            const bufferSize = audioCtx.sampleRate * 3;
             const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const output = noiseBuffer.getChannelData(0);
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = Math.random() * 2 - 1;
             }
 
-            const whiteNoise = audioCtx.createBufferSource();
-            whiteNoise.buffer = noiseBuffer;
+            activeNoise = audioCtx.createBufferSource();
+            activeNoise.buffer = noiseBuffer;
+            activeNoise.loop = true;
 
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'bandpass';
             filter.frequency.setValueAtTime(frequency * 1.5, now);
-            filter.Q.setValueAtTime(4.0, now);
+            filter.Q.setValueAtTime(4.5, now);
 
-            // 3. Dybys küyşisi (Envelope - dem alu jäne sönu äseri)
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0, now);
-            gainNode.gain.linearRampToValueAtTime(0.25, now + 0.15); // Jäi köterilui
-            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 2.5); // Baeppen sönywi
+            // 3. Gain Envelopes
+            activeGain = audioCtx.createGain();
+            activeGain.gain.setValueAtTime(0, now);
+            activeGain.gain.linearRampToValueAtTime(0.28, now + 0.1);
 
-            const noiseGain = audioCtx.createGain();
-            noiseGain.gain.setValueAtTime(0.08, now); // Aua syryldauınan salmaq azadu
+            activeNoiseGain = audioCtx.createGain();
+            activeNoiseGain.gain.setValueAtTime(0.09, now);
 
             // Baylanystyru
-            osc.connect(gainNode);
-            whiteNoise.connect(filter);
-            filter.connect(noiseGain);
-            noiseGain.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            activeOscillator.connect(activeGain);
+            activeNoise.connect(filter);
+            filter.connect(activeNoiseGain);
+            activeNoiseGain.connect(activeGain);
+            activeGain.connect(audioCtx.destination);
 
-            // İske qosuu
-            osc.start(now);
-            whiteNoise.start(now);
-
-            osc.stop(now + 2.5);
-            whiteNoise.stop(now + 2.5);
+            activeOscillator.start(now);
+            activeNoise.start(now);
         }
+
+        function stopSybyzghy() {
+            if (audioCtx && activeGain) {
+                const now = audioCtx.currentTime;
+                activeGain.gain.linearRampToValueAtTime(0.001, now + 0.15);
+                setTimeout(() => {
+                    if (activeOscillator) {
+                        try { activeOscillator.stop(); activeNoise.stop(); activeVibrato.stop(); } catch(e) {}
+                        activeOscillator = null;
+                    }
+                }, 160);
+            }
+        }
+
+        // Mobil jäne kompyuter oqigalary (Touch & Mouse Support)
+        document.querySelectorAll('.note-btn').forEach(btn => {
+            const freq = parseFloat(btn.getAttribute('data-freq'));
+
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                btn.classList.add('active');
+                playSybyzghy(freq);
+                document.getElementById('pitchSlider').value = freq;
+            });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                btn.classList.remove('active');
+                stopSybyzghy();
+            });
+
+            btn.addEventListener('mousedown', () => {
+                btn.classList.add('active');
+                playSybyzghy(freq);
+                document.getElementById('pitchSlider').value = freq;
+            });
+
+            btn.addEventListener('mouseup', () => {
+                btn.classList.remove('active');
+                stopSybyzghy();
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('active');
+                stopSybyzghy();
+            });
+        });
+
+        // Slider arqyly jiilikti basqaru
+        const slider = document.getElementById('pitchSlider');
+        slider.addEventListener('input', (e) => {
+            if (activeOscillator && audioCtx) {
+                const freq = parseFloat(e.target.value);
+                activeOscillator.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
+            }
+        });
     </script>
 </body>
 </html>
