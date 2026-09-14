@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>www.sybyzghy.com — Sanandyq Sybyzghy</title>
+    <style>
+        :root {
+            --bg-color: #0f1410;
+            --card-bg: #18221b;
+            --accent-color: #d4af37;
+            --text-color: #e2e8f0;
+            --secondary-text: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: var(--secondary-text);
+            font-size: 1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .note-btn {
+            background-color: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 15px 10px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .note-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .note-btn:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>www.sybyzghy.com</h1>
+        <p>Eşbir jazba faylsız, taza fizika men matematika (Web Audio API) negizinde júretin sanandyq sybyzghy dybystau qūralı.</p>
+
+        <div class="notes-grid">
+            <button class="note-btn" onclick="playSybyzghy(261.63)">Do (C4)</button>
+            <button class="note-btn" onclick="playSybyzghy(293.66)">Re (D4)</button>
+            <button class="note-btn" onclick="playSybyzghy(329.63)">Mi (E4)</button>
+            <button class="note-btn" onclick="playSybyzghy(392.00)">Sol (G4)</button>
+            <button class="note-btn" onclick="playSybyzghy(440.00)">Lya (A4)</button>
+            <button class="note-btn" onclick="playSybyzghy(523.25)">Do (C5)</button>
+        </div>
+
+        <div class="info-box">
+            Tömendegi batırmalardı basıp, sybyzghynyñ aua syryldauı men rezonans alqabın estip köriñiz.
+        </div>
+    </div>
+
+    <script>
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSybyzghy(frequency) {
+            initAudio();
+            const now = audioCtx.currentTime;
+
+            // 1. Sybyzghynyñ negizgi garmonikalıq üni (Triangle wave - tabigi qonyray ünge jaqın)
+            const osc = audioCtx.createOscillator();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(frequency, now);
+
+            // Azdağan vibrato (jan beru üşin)
+            const vibrato = audioCtx.createOscillator();
+            vibrato.frequency.setValueAtTime(5, now); // 5 Hz terbelis
+            const vibratoGain = audioCtx.createGain();
+            vibratoGain.gain.setValueAtTime(3, now); // terbelis tereñdigi
+            vibrato.connect(osc.frequency);
+            vibrato.start(now);
+            vibrato.stop(now + 2.5);
+
+            // 2. Aua ağynynyñ syryldauı (Breathy Noise - White Noise + Bandpass Filter)
+            const bufferSize = audioCtx.sampleRate * 2.5;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(frequency * 1.5, now);
+            filter.Q.setValueAtTime(4.0, now);
+
+            // 3. Dybys küyşisi (Envelope - dem alu jäne sönu äseri)
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.25, now + 0.15); // Jäi köterilui
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 2.5); // Baeppen sönywi
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.08, now); // Aua syryldauınan salmaq azadu
+
+            // Baylanystyru
+            osc.connect(gainNode);
+            whiteNoise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            // İske qosuu
+            osc.start(now);
+            whiteNoise.start(now);
+
+            osc.stop(now + 2.5);
+            whiteNoise.stop(now + 2.5);
+        }
+    </script>
+</body>
+</html>
