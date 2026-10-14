@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>www.sybyzghy.com — Sandyq Sybyzghy zhaine Akustikalyq Zerthana</title>
+    <style>
+        :root {
+            --bg-color: #060907;
+            --panel-bg: #0f1612;
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --accent-gold: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.45);
+            --accent-cyan: #38bdf8;
+            --text-main: #e8ece9;
+            --text-muted: #8fa395;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-gold);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 740px;
+            width: 100%;
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        /* Bas taqyryp zhaine Rezhim auuystyrghysh */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand-box h1 {
+            color: var(--accent-gold);
+            font-size: 1.55rem;
+            margin: 0;
+            letter-spacing: 1.2px;
+        }
+
+        .brand-box p {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            margin: 4px 0 0 0;
+        }
+
+        .mode-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-pill {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--border-gold);
+            color: var(--accent-gold);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .btn-pill:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-pill.active {
+            background: var(--accent-gold);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Vizualizator ekrandary */
+        .monitors-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .monitors-grid.lab-open {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media (max-width: 600px) {
+            .monitors-grid.lab-open {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .monitor-frame {
+            background: #070a08;
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 14px;
+            padding: 8px;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.85);
+        }
+
+        .monitor-frame.fft-box {
+            display: none;
+        }
+
+        .monitors-grid.lab-open .monitor-frame.fft-box {
+            display: block;
+        }
+
+        .monitor-tag {
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            font-size: 0.68rem;
+            font-family: monospace;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        canvas.screen-canvas {
+            width: 100%;
+            height: 85px;
+            display: block;
+        }
+
+        /* Sybyzghy tuutigi men ojuulary */
+        .sybyzghy-body {
+            position: relative;
+            background: linear-gradient(180deg, #7a5a2b 0%, #3d2b12 55%, #1c1307 100%);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50px;
+            height: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 0 18px;
+            margin-bottom: 18px;
+            box-shadow:
+                inset 0 4px 12px rgba(255, 255, 255, 0.15),
+                inset 0 -10px 22px rgba(0, 0, 0, 0.9),
+                0 10px 30px rgba(0, 0, 0, 0.7);
+            transition: background 0.35s ease;
+        }
+
+        /* Qazaqy saqinalar */
+        .sybyzghy-body::before,
+        .sybyzghy-body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 9px;
+            background: linear-gradient(180deg, #f3e5ab, #d4af37, #7a5f14);
+            opacity: 0.75;
+            pointer-events: none;
+        }
+        .sybyzghy-body::before { left: 24px; }
+        .sybyzghy-body::after { right: 24px; }
+
+        .ornament-hole {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, #060402 42%, #24160b 100%);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: transform 0.12s ease, box-shadow 0.15s ease;
+            z-index: 2;
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.95);
+        }
+
+        .ornament-hole .oju-symbol {
+            color: var(--accent-gold);
+            font-size: 0.95rem;
+            line-height: 1;
+        }
+
+        .ornament-hole .freq-label {
+            color: var(--text-muted);
+            font-size: 0.58rem;
+            font-family: monospace;
+            margin-top: 2px;
+        }
+
+        .ornament-hole.active {
+            background: radial-gradient(circle, var(--accent-gold) 15%, #523519 100%);
+            box-shadow: 0 0 24px var(--accent-gold), inset 0 0 8px #ffffff;
+            transform: scale(1.12);
+        }
+
+        .ornament-hole.active .oju-symbol,
+        .ornament-hole.active .freq-label {
+            color: #060907;
+            font-weight: bold;
+        }
+
+        /* Negizgi zhyldam basqaruu (Saz rezhiminde de koerinedi) */
+        .quick-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            flex-wrap: wrap;
+        }
+
+        .quick-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .quick-slider-wrap span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .quick-slider-wrap strong {
+            color: var(--accent-gold);
+            font-family: monospace;
+            font-size: 0.8rem;
+            min-width: 40px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--accent-gold);
+            cursor: pointer;
+        }
+
+        /* ZERTHANA PANELI (Zhasyryn bolady, batyrmamen ashylady) */
+        .lab-drawer {
+            display: none;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px dashed rgba(212, 175, 55, 0.3);
+            animation: fadeIn 0.25s ease;
+        }
+
+        .lab-drawer.open {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .telemetry-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #080c0a;
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            border-radius: 10px;
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            font-family: monospace;
+            font-size: 0.78rem;
+            color: var(--accent-cyan);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .lab-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 620px) {
+            .lab-controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lab-param-box {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .lab-param-head {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .lab-param-head strong {
+            color: var(--accent-gold);
+            font-family: monospace;
+        }
+
+        .lab-selects-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 550px) {
+            .lab-selects-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        select {
+            background: #121c16;
+            color: var(--accent-gold);
+            border: 1px solid var(--border-gold);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .footer-hint {
+            text-align: center;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <!-- Basqy taqyryp zhaine Rezhim batyrmalary -->
+        <div class="header-bar">
+            <div class="brand-box">
+                <h1>www.sybyzghy.com</h1>
+                <p>Qazaqtygn sandyq-akustikalyq sybyzghysy men dybys zerthanasy</p>
+            </div>
+            <div class="mode-actions">
+                <button id="droneBtn" class="btn-pill active" title="Tamaghynan shyghatyn toeimengi burdon">Koemkej: Qosuly</button>
+                <button id="labToggleBtn" class="btn-pill">Zerthana paneli</button>
+            </div>
+        </div>
+
+        <!-- Ekrandar: Saz rezhiminde 1 ekran, Zerthanada 2 ekran -->
+        <div class="monitors-grid" id="monitorsGrid">
+            <div class="monitor-frame">
+                <span class="monitor-tag">Tolqyn Pishini (Oscilloscope)</span>
+                <canvas id="scopeCanvas" class="screen-canvas"></canvas>
+            </div>
+            <div class="monitor-frame fft-box">
+                <span class="monitor-tag">Oberton Spektri (FFT Harmonics)</span>
+                <canvas id="fftCanvas" class="screen-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Sybyzghy tuutigi men 7 ojuu tesigi -->
+        <div class="sybyzghy-body" id="fluteBody">
+            <div class="ornament-hole" data-index="0"><span class="oju-symbol">❖</span><span class="freq-label" id="hz0">264Hz</span></div>
+            <div class="ornament-hole" data-index="1"><span class="oju-symbol">❖</span><span class="freq-label" id="hz1">297Hz</span></div>
+            <div class="ornament-hole" data-index="2"><span class="oju-symbol">❖</span><span class="freq-label" id="hz2">330Hz</span></div>
+            <div class="ornament-hole" data-index="3"><span class="oju-symbol">❖</span><span class="freq-label" id="hz3">352Hz</span></div>
+            <div class="ornament-hole" data-index="4"><span class="oju-symbol">❖</span><span class="freq-label" id="hz4">396Hz</span></div>
+            <div class="ornament-hole" data-index="5"><span class="oju-symbol">❖</span><span class="freq-label" id="hz5">440Hz</span></div>
+            <div class="ornament-hole" data-index="6"><span class="oju-symbol">❖</span><span class="freq-label" id="hz6">528Hz</span></div>
+        </div>
+
+        <!-- Saz rezhimindegi negizgi Uirleu kuishi slajderi -->
+        <div class="quick-bar">
+            <div class="quick-slider-wrap">
+                <span>Uirleu qysymy (Oberton kuishi):</span>
+                <input type="range" id="breathSlider" min="15" max="100" value="65">
+                <strong id="breathVal">65%</strong>
+            </div>
+        </div>
+
+        <!-- ZERTHANA PANELI (Batyrmany basqanda ashylady) -->
+        <div class="lab-drawer" id="labDrawer">
+            <div class="telemetry-banner">
+                <span id="telemetryText">f₀: 263.8 Hz | L: 64.0 sm | d: 16 mm</span>
+                <span>Formula: f₀ = c / [2 * (L + 0.6d)]</span>
+            </div>
+
+            <div class="lab-controls-grid">
+                <div class="lab-param-box">
+                    <div class="lab-param-head">
+                        <span>Tuutik uzyndyghy (L):</span>
+                        <strong id="lenVal">64.0 sm</strong>
+                    </div>
+                    <input type="range" id="lengthSlider" min="45" max="85" value="64" step="0.5">
+                </div>
+
+                <div class="lab-param-box">
+                    <div class="lab-param-head">
+                        <span>Ishki diametri (d):</span>
+                        <strong id="diaVal">16 mm</strong>
+                    </div>
+                    <input type="range" id="diaSlider" min="10" max="26" value="16" step="1">
+                </div>
+
+                <div class="lab-param-box">
+                    <div class="lab-param-head">
+                        <span>Auua syryly (Turbulence):</span>
+                        <strong id="turbVal">50%</strong>
+                    </div>
+                    <input type="range" id="turbSlider" min="5" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="lab-selects-row">
+                <select id="materialSelect">
+                    <option value="reed">Material: Quuraj / Qamys (Zhumsaq, qognyr uin)</option>
+                    <option value="wood">Material: Qaragaj / Qajygn (Orta rezonans)</option>
+                    <option value="brass">Material: Zhez tuutik (Ashyq, zhogharghy oberton)</option>
+                </select>
+
+                <select id="scaleSelect">
+                    <option value="just">Qatar: Tabighy Oberton (Just Intonation)</option>
+                    <option value="tet">Qatar: 12-TET (Tegngerilgen shkala)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="footer-hint">
+            Ojuulardy (bir nemese birnesheuin qatar) basyp turygnyz. Kompjuter pernetaqtasynda: <strong>1 – 7</strong> perneleri.
+        </div>
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let masterGain = null;
+        let analyser = null;
+        let formantFilter1 = null;
+        let formantFilter2 = null;
+        let dampingFilter = null;
+        let droneNodes = null;
+        let activeVoices = new Map();
+
+        // Fizikalyq parametrler
+        const SPEED_OF_SOUND = 34300; // sm/s (20°C auuada)
+        let tubeLengthCm = 64.0;
+        let tubeDiaMm = 16.0;
+        let breathPressure = 0.65;
+        let turbulence = 0.50;
+        let currentMaterial = 'reed';
+        let scaleMode = 'just';
+        let droneOn = true;
+
+        // Tabighy garmonikalyq zhaine 12-TET qatynastary
+        const JUST_RATIOS = [1.0, 9/8, 5/4, 4/3, 3/2, 5/3, 2.0];
+        const TET_RATIOS = [0, 2, 4, 5, 7, 9, 12].map(s => Math.pow(2, s / 12));
+
+        function calculateFundamentalFreq() {
+            const d_cm = tubeDiaMm / 10.0;
+            const effectiveLen = tubeLengthCm + (0.6 * d_cm);
+            return SPEED_OF_SOUND / (2 * effectiveLen);
+        }
+
+        function updatePhysicsAndFrequencies() {
+            const f0 = calculateFundamentalFreq();
+            document.getElementById('telemetryText').textContent =
+                `f₀: ${f0.toFixed(1)} Hz | L: ${tubeLengthCm.toFixed(1)} sm | d: ${tubeDiaMm} mm`;
+
+            const ratios = scaleMode === 'just' ? JUST_RATIOS : TET_RATIOS;
+            const holes = document.querySelectorAll('.ornament-hole');
+
+            holes.forEach((hole, idx) => {
+                const freq = f0 * ratios[idx];
+                hole.setAttribute('data-freq', freq);
+                document.getElementById('hz' + idx).textContent = Math.round(freq) + 'Hz';
+
+                const key = 'hole_' + idx;
+                if (activeVoices.has(key) && audioCtx) {
+                    const v = activeVoices.get(key);
+                    v.oscList.forEach(item => {
+                        item.osc.frequency.setTargetAtTime(freq * item.h, audioCtx.currentTime, 0.04);
+                    });
+                    v.noiseFilter.frequency.setTargetAtTime(freq * 1.6, audioCtx.currentTime, 0.04);
+                }
+            });
+
+            if (droneNodes && audioCtx) {
+                droneNodes.osc.frequency.setTargetAtTime(f0 * 0.5, audioCtx.currentTime, 0.05);
+            }
+        }
+
+        function applyMaterialCharacteristics() {
+            const fluteEl = document.getElementById('fluteBody');
+            if (currentMaterial === 'reed') {
+                fluteEl.style.background = 'linear-gradient(180deg, #7a5a2b 0%, #3d2b12 55%, #1c1307 100%)';
+            } else if (currentMaterial === 'wood') {
+                fluteEl.style.background = 'linear-gradient(180deg, #5c321e 0%, #2b160c 55%, #140904 100%)';
+            } else if (currentMaterial === 'brass') {
+                fluteEl.style.background = 'linear-gradient(180deg, #a68a38 0%, #544416 55%, #241c07 100%)';
+            }
+
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            if (currentMaterial === 'reed') {
+                formantFilter1.frequency.setTargetAtTime(720, now, 0.05);
+                formantFilter1.gain.setTargetAtTime(6.0, now, 0.05);
+                dampingFilter.frequency.setTargetAtTime(2400, now, 0.05);
+            } else if (currentMaterial === 'wood') {
+                formantFilter1.frequency.setTargetAtTime(950, now, 0.05);
+                formantFilter1.gain.setTargetAtTime(4.5, now, 0.05);
+                dampingFilter.frequency.setTargetAtTime(3800, now, 0.05);
+            } else if (currentMaterial === 'brass') {
+                formantFilter1.frequency.setTargetAtTime(1450, now, 0.05);
+                formantFilter1.gain.setTargetAtTime(7.0, now, 0.05);
+                dampingFilter.frequency.setTargetAtTime(6500, now, 0.05);
+            }
+        }
+
+        function initAudioEngine() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                masterGain = audioCtx.createGain();
+                masterGain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+
+                formantFilter1 = audioCtx.createBiquadFilter();
+                formantFilter1.type = 'peaking';
+                formantFilter1.Q.setValueAtTime(2.5, audioCtx.currentTime);
+
+                formantFilter2 = audioCtx.createBiquadFilter();
+                formantFilter2.type = 'peaking';
+                formantFilter2.frequency.setValueAtTime(2150, audioCtx.currentTime);
+                formantFilter2.Q.setValueAtTime(3.0, audioCtx.currentTime);
+                formantFilter2.gain.setValueAtTime(3.5, audioCtx.currentTime);
+
+                dampingFilter = audioCtx.createBiquadFilter();
+                dampingFilter.type = 'lowpass';
+
+                const compressor = audioCtx.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-16, audioCtx.currentTime);
+                compressor.ratio.setValueAtTime(4, audioCtx.currentTime);
+
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 1024;
+                analyser.smoothingTimeConstant = 0.82;
+
+                // Tau zhaghyryghy (Acoustic Delay Reverb)
+                const delay = audioCtx.createDelay();
+                delay.delayTime.setValueAtTime(0.21, audioCtx.currentTime);
+                const feedback = audioCtx.createGain();
+                feedback.gain.setValueAtTime(0.28, audioCtx.currentTime);
+                const echoFilter = audioCtx.createBiquadFilter();
+                echoFilter.type = 'lowpass';
+                echoFilter.frequency.setValueAtTime(1450, audioCtx.currentTime);
+
+                masterGain.connect(formantFilter1);
+                formantFilter1.connect(formantFilter2);
+                formantFilter2.connect(dampingFilter);
+                dampingFilter.connect(compressor);
+
+                compressor.connect(analyser);
+                analyser.connect(audioCtx.destination);
+
+                compressor.connect(delay);
+                delay.connect(echoFilter);
+                echoFilter.connect(feedback);
+                feedback.connect(delay);
+                echoFilter.connect(analyser);
+
+                applyMaterialCharacteristics();
+                startVisualMonitors();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function syncDroneVoice() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const f0 = calculateFundamentalFreq();
+
+            if (droneOn && activeVoices.size > 0 && !droneNodes) {
+                const osc = audioCtx.createOscillator();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(f0 * 0.5, now);
+
+                const throatFilter = audioCtx.createBiquadFilter();
+                throatFilter.type = 'lowpass';
+                throatFilter.frequency.setValueAtTime(330, now);
+                throatFilter.Q.setValueAtTime(4.2, now);
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.linearRampToValueAtTime(0.13, now + 0.22);
+
+                osc.connect(throatFilter);
+                throatFilter.connect(gain);
+                gain.connect(masterGain);
+                osc.start(now);
+
+                droneNodes = { osc, gain };
+            } else if ((!droneOn || activeVoices.size === 0) && droneNodes) {
+                const old = droneNodes;
+                droneNodes = null;
+                old.gain.gain.linearRampToValueAtTime(0.0001, now + 0.16);
+                setTimeout(() => { try { old.osc.stop(); } catch(e){} }, 190);
+            }
+        }
+
+        function getHarmonicAmplitudes(pressure, diaMm) {
+            const boreRatio = 18 / diaMm;
+            const p = pressure * boreRatio;
+            return [
+                Math.max(0.15, 1.0 - (p * 0.42)),
+                Math.min(1.0, 0.58 * p),
+                Math.min(0.9, 0.42 * p * p),
+                Math.min(0.7, 0.26 * Math.pow(p, 2.2)),
+                Math.min(0.5, 0.14 * Math.pow(p, 2.5)),
+                Math.min(0.3, 0.07 * Math.pow(p, 3.0))
+            ];
+        }
+
+        function startNoteVoice(id, freq) {
+            initAudioEngine();
+            if (activeVoices.has(id)) return;
+            const now = audioCtx.currentTime;
+
+            // 1. Chiff — Bastapqy auua soqqysy
+            const chiffLen = Math.floor(audioCtx.sampleRate * 0.055);
+            const chiffBuf = audioCtx.createBuffer(1, chiffLen, audioCtx.sampleRate);
+            const cData = chiffBuf.getChannelData(0);
+            for (let i = 0; i < chiffLen; i++) {
+                cData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.018));
+            }
+            const chiffSrc = audioCtx.createBufferSource();
+            chiffSrc.buffer = chiffBuf;
+            const chiffBp = audioCtx.createBiquadFilter();
+            chiffBp.type = 'bandpass';
+            chiffBp.frequency.setValueAtTime(freq * 2.3, now);
+            const chiffGain = audioCtx.createGain();
+            chiffGain.gain.setValueAtTime(0.22 * turbulence, now);
+            chiffSrc.connect(chiffBp);
+            chiffBp.connect(chiffGain);
+            chiffGain.connect(masterGain);
+            chiffSrc.start(now);
+
+            // 2. Obertondyq qatar (6 garmonika)
+            const amps = getHarmonicAmplitudes(breathPressure, tubeDiaMm);
+            let oscList = [];
+
+            const vibrato = audioCtx.createOscillator();
+            vibrato.frequency.setValueAtTime(5.4, now);
+            const vibGain = audioCtx.createGain();
+            vibGain.gain.setValueAtTime(0.01, now);
+            vibGain.gain.linearRampToValueAtTime(3.8, now + 0.42);
+            vibrato.connect(vibGain);
+            vibrato.start(now);
+
+            [1, 2, 3, 4, 5, 6].forEach((h, idx) => {
+                const osc = audioCtx.createOscillator();
+                osc.type = idx === 0 ? 'triangle' : 'sine';
+                const targetF = freq * h;
+                osc.frequency.setValueAtTime(targetF * 0.986, now);
+                osc.frequency.exponentialRampToValueAtTime(targetF, now + 0.065);
+
+                vibGain.connect(osc.frequency);
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.linearRampToValueAtTime(amps[idx] * 0.24, now + 0.085);
+
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start(now);
+
+                oscList.push({ osc, gain, h });
+            });
+
+            // 3. Tuutik ishindegi auua syryly (Pink-like Breath Noise)
+            const nLen = audioCtx.sampleRate * 2;
+            const nBuf = audioCtx.createBuffer(1, nLen, audioCtx.sampleRate);
+            const out = nBuf.getChannelData(0);
+            let b0 = 0, b1 = 0;
+            for (let i = 0; i < nLen; i++) {
+                const w = Math.random() * 2 - 1;
+                b0 = 0.99 * b0 + w * 0.04;
+                b1 = 0.96 * b1 + w * 0.06;
+                out[i] = (b0 + b1 + w * 0.05) * 3.0;
+            }
+            const noiseSrc = audioCtx.createBufferSource();
+            noiseSrc.buffer = nBuf;
+            noiseSrc.loop = true;
+
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(freq * 1.6, now);
+            noiseFilter.Q.setValueAtTime(4.8, now);
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.001, now);
+            noiseGain.gain.linearRampToValueAtTime(0.18 * turbulence, now + 0.08);
+
+            noiseSrc.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(masterGain);
+            noiseSrc.start(now);
+
+            activeVoices.set(id, { oscList, noiseSrc, noiseGain, noiseFilter, vibrato });
+            syncDroneVoice();
+        }
+
+        function stopNoteVoice(id) {
+            if (!activeVoices.has(id) || !audioCtx) return;
+            const now = audioCtx.currentTime;
+            const v = activeVoices.get(id);
+            activeVoices.delete(id);
+
+            v.oscList.forEach(item => item.gain.gain.setTargetAtTime(0.0001, now, 0.035));
+            v.noiseGain.gain.setTargetAtTime(0.0001, now, 0.035);
+
+            setTimeout(() => {
+                try {
+                    v.oscList.forEach(item => item.osc.stop());
+                    v.noiseSrc.stop();
+                    v.vibrato.stop();
+                } catch(e){}
+            }, 160);
+
+            syncDroneVoice();
+        }
+
+        // Ojuular men Pernelerdi iske qosuu
+        const holes = document.querySelectorAll('.ornament-hole');
+        holes.forEach((hole, idx) => {
+            const id = 'hole_' + idx;
+            const press = (e) => {
+                e.preventDefault();
+                hole.classList.add('active');
+                startNoteVoice(id, parseFloat(hole.getAttribute('data-freq')));
+            };
+            const release = (e) => {
+                e.preventDefault();
+                hole.classList.remove('active');
+                stopNoteVoice(id);
+            };
+            hole.addEventListener('touchstart', press);
+            hole.addEventListener('touchend', release);
+            hole.addEventListener('mousedown', press);
+            hole.addEventListener('mouseup', release);
+            hole.addEventListener('mouseleave', () => {
+                if (hole.classList.contains('active')) {
+                    hole.classList.remove('active');
+                    stopNoteVoice(id);
+                }
+            });
+        });
+
+        window.addEventListener('keydown', (e) => {
+            const idx = parseInt(e.key) - 1;
+            if (idx >= 0 && idx < holes.length && !holes[idx].classList.contains('active')) {
+                holes[idx].classList.add('active');
+                startNoteVoice('hole_' + idx, parseFloat(holes[idx].getAttribute('data-freq')));
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const idx = parseInt(e.key) - 1;
+            if (idx >= 0 && idx < holes.length) {
+                holes[idx].classList.remove('active');
+                stopNoteVoice('hole_' + idx);
+            }
+        });
+
+        // Rezhim batyrmalary (Koemkej & Zerthana paneli)
+        const droneBtn = document.getElementById('droneBtn');
+        droneBtn.addEventListener('click', () => {
+            droneOn = !droneOn;
+            droneBtn.classList.toggle('active', droneOn);
+            droneBtn.textContent = droneOn ? 'Koemkej: Qosuly' : 'Koemkej: Oeshiruuli';
+            syncDroneVoice();
+        });
+
+        const labToggleBtn = document.getElementById('labToggleBtn');
+        const labDrawer = document.getElementById('labDrawer');
+        const monitorsGrid = document.getElementById('monitorsGrid');
+
+        labToggleBtn.addEventListener('click', () => {
+            const isOpen = labDrawer.classList.toggle('open');
+            monitorsGrid.classList.toggle('lab-open', isOpen);
+            labToggleBtn.classList.toggle('active', isOpen);
+            labToggleBtn.textContent = isOpen ? 'Zerthanany zhabuu' : 'Zerthana paneli';
+        });
+
+        // Slajderler men tizimder
+        document.getElementById('breathSlider').addEventListener('input', (e) => {
+            breathPressure = parseInt(e.target.value) / 100;
+            document.getElementById('breathVal').textContent = e.target.value + '%';
+            if (!audioCtx) return;
+            const amps = getHarmonicAmplitudes(breathPressure, tubeDiaMm);
+            activeVoices.forEach(v => {
+                v.oscList.forEach((item, idx) => {
+                    item.gain.gain.setTargetAtTime(amps[idx] * 0.24, audioCtx.currentTime, 0.04);
+                });
+            });
+        });
+
+        document.getElementById('lengthSlider').addEventListener('input', (e) => {
+            tubeLengthCm = parseFloat(e.target.value);
+            document.getElementById('lenVal').textContent = tubeLengthCm.toFixed(1) + ' sm';
+            updatePhysicsAndFrequencies();
+        });
+
+        document.getElementById('diaSlider').addEventListener('input', (e) => {
+            tubeDiaMm = parseFloat(e.target.value);
+            document.getElementById('diaVal').textContent = tubeDiaMm + ' mm';
+            updatePhysicsAndFrequencies();
+        });
+
+        document.getElementById('turbSlider').addEventListener('input', (e) => {
+            turbulence = parseInt(e.target.value) / 100;
+            document.getElementById('turbVal').textContent = e.target.value + '%';
+            if (!audioCtx) return;
+            activeVoices.forEach(v => {
+                v.noiseGain.gain.setTargetAtTime(0.18 * turbulence, audioCtx.currentTime, 0.04);
+            });
+        });
+
+        document.getElementById('materialSelect').addEventListener('change', (e) => {
+            currentMaterial = e.target.value;
+            applyMaterialCharacteristics();
+        });
+
+        document.getElementById('scaleSelect').addEventListener('change', (e) => {
+            scaleMode = e.target.value;
+            updatePhysicsAndFrequencies();
+        });
+
+        // Vizualizatorlar
+        function startVisualMonitors() {
+            const scopeCanvas = document.getElementById('scopeCanvas');
+            const scopeCtx = scopeCanvas.getContext('2d');
+            const fftCanvas = document.getElementById('fftCanvas');
+            const fftCtx = fftCanvas.getContext('2d');
+
+            const bufferLen = analyser.frequencyBinCount;
+            const timeData = new Uint8Array(bufferLen);
+            const freqData = new Uint8Array(bufferLen);
+
+            function renderLoop() {
+                requestAnimationFrame(renderLoop);
+
+                // 1. Tolqyn pishini
+                analyser.getByteTimeDomainData(timeData);
+                scopeCtx.fillStyle = '#070a08';
+                scopeCtx.fillRect(0, 0, scopeCanvas.width, scopeCanvas.height);
+                scopeCtx.lineWidth = 2;
+                scopeCtx.strokeStyle = '#d4af37';
+                scopeCtx.beginPath();
+
+                const slice = scopeCanvas.width / bufferLen;
+                let x = 0;
+                for (let i = 0; i < bufferLen; i++) {
+                    const y = (timeData[i] / 128.0) * (scopeCanvas.height / 2);
+                    i === 0 ? scopeCtx.moveTo(x, y) : scopeCtx.lineTo(x, y);
+                    x += slice;
+                }
+                scopeCtx.stroke();
+
+                // 2. FFT Spektr (Zerthana ashyq kezde)
+                if (labDrawer.classList.contains('open')) {
+                    analyser.getByteFrequencyData(freqData);
+                    fftCtx.fillStyle = '#070a08';
+                    fftCtx.fillRect(0, 0, fftCanvas.width, fftCanvas.height);
+
+                    const bins = 110;
+                    const barW = fftCanvas.width / bins;
+                    for (let i = 0; i < bins; i++) {
+                        const val = freqData[i];
+                        const barH = (val / 255) * fftCanvas.height;
+                        fftCtx.fillStyle = i < 14 ? '#38bdf8' : '#d4af37';
+                        fftCtx.fillRect(i * barW, fftCanvas.height - barH, barW - 1, barH);
+                    }
+                }
+            }
+            renderLoop();
+        }
+
+        // Bastapqy zhiilikterdi ornatuu
+        updatePhysicsAndFrequencies();
+    </script>
+</body>
+</html>
