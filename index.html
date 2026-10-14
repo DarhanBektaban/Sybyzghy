@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>www.sybyzghy.com — Sanandyq Sybyzghy</title>
+    <title>www.sybyzghy.com — Akustikalyq Sybyzghy</title>
     <style>
         :root {
-            --bg-color: #060a07;
-            --card-bg: #0f1610;
+            --bg-color: #070a08;
+            --card-bg: #111813;
+            --wood-dark: #2c1d11;
+            --wood-light: #5c3d24;
             --accent-color: #d4af37;
-            --accent-glow: rgba(212, 175, 55, 0.4);
-            --text-color: #e2e8f0;
-            --secondary-text: #94a3b8;
+            --accent-glow: rgba(212, 175, 55, 0.45);
+            --text-color: #e8ece9;
+            --secondary-text: #8fa395;
         }
 
         * {
@@ -21,99 +23,154 @@
 
         body {
             margin: 0;
-            padding: 0;
+            padding: 15px;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .container {
             background-color: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.35);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 24px;
             padding: 25px;
-            max-width: 550px;
-            width: 94%;
+            max-width: 620px;
+            width: 100%;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
         }
 
         h1 {
             color: var(--accent-color);
-            font-size: 1.6rem;
-            margin-bottom: 5px;
+            font-size: 1.65rem;
+            margin: 0 0 6px 0;
             letter-spacing: 1.5px;
         }
 
-        p {
+        .subtitle {
             color: var(--secondary-text);
             font-size: 0.85rem;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             line-height: 1.4;
         }
 
-        /* Sybyzghı sūlbatı paneli */
-        .sybyzghy-pipe {
-            position: relative;
-            background: linear-gradient(90deg, #162218, #233325, #162218);
-            border: 2px solid var(--accent-color);
-            border-radius: 50px;
-            height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 20px;
-            margin-bottom: 25px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 20px var(--accent-glow);
+        /* Real-time tolqyn ekrany */
+        canvas#visualizer {
+            width: 100%;
+            height: 75px;
+            background: #090d0a;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
         }
 
-        .ornament-node {
-            width: 45px;
-            height: 45px;
-            background-color: rgba(212, 175, 55, 0.1);
-            border: 2px dashed var(--accent-color);
+        /* Sybyzghy tuutigi */
+        .sybyzghy-flute {
+            position: relative;
+            background: linear-gradient(180deg, var(--wood-light) 0%, var(--wood-dark) 50%, #1a1008 100%);
+            border: 2px solid var(--accent-color);
+            border-radius: 45px;
+            height: 86px;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 0 15px;
+            margin-bottom: 22px;
+            box-shadow: inset 0 4px 12px rgba(255,255,255,0.12), inset 0 -8px 20px rgba(0,0,0,0.9), 0 8px 25px rgba(0,0,0,0.6);
+        }
+
+        /*Saqinalar (qazaqy bezendiruu) */
+        .sybyzghy-flute::before, .sybyzghy-flute::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            background: linear-gradient(180deg, #f3e5ab, #d4af37, #8a6d1b);
+            opacity: 0.7;
+        }
+        .sybyzghy-flute::before { left: 28px; }
+        .sybyzghy-flute::after { right: 28px; }
+
+        /* Ojuu tesikteri */
+        .ornament-hole {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, #090604 40%, #1f140b 100%);
+            border: 2px solid var(--accent-color);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s ease;
+            transition: all 0.12s ease;
             user-select: none;
+            z-index: 2;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.95);
         }
 
-        .ornament-node span {
-            font-size: 0.75rem;
+        .ornament-hole span.oju {
+            font-size: 0.95rem;
             color: var(--accent-color);
+            line-height: 1;
+        }
+
+        .ornament-hole span.note-name {
+            font-size: 0.6rem;
+            color: var(--secondary-text);
+            margin-top: 2px;
+        }
+
+        .ornament-hole:active, .ornament-hole.active {
+            background: radial-gradient(circle, var(--accent-color) 10%, #5c3d24 100%);
+            box-shadow: 0 0 22px var(--accent-color), inset 0 0 10px #fff;
+            transform: scale(1.1);
+        }
+
+        .ornament-hole.active span.oju, .ornament-hole.active span.note-name {
+            color: #070a08;
             font-weight: bold;
         }
 
-        .ornament-node:active, .ornament-node.active {
-            background-color: var(--accent-color);
-            border-style: solid;
-            box-shadow: 0 0 25px var(--accent-color);
-            transform: scale(1.12);
+        /* Basqaruu paneli */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .ornament-node.active span {
-            color: var(--bg-color);
+        .control-group {
+            display: flex;
+            flex-direction: column;
         }
 
-        .slider-section {
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        .control-group.full-width {
+            grid-column: span 2;
         }
 
-        .slider-label {
-            font-size: 0.8rem;
+        .control-label {
+            font-size: 0.78rem;
             color: var(--secondary-text);
-            margin-bottom: 5px;
-            display: block;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-label strong {
+            color: var(--accent-color);
         }
 
         input[type=range] {
@@ -122,10 +179,37 @@
             cursor: pointer;
         }
 
-        .info-box {
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .btn-toggle {
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-toggle.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            font-weight: bold;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .info-footer {
             font-size: 0.75rem;
             color: var(--secondary-text);
-            margin-top: 15px;
+            margin-top: 16px;
         }
     </style>
 </head>
@@ -133,197 +217,450 @@
 
     <div class="container">
         <h1>www.sybyzghy.com</h1>
-        <p>Taza fizika, obertondıq qonyray äri tau keñistigi jañğyryğy arqyly jūratin sanandyq sybyzghy.</p>
+        <div class="subtitle">Fizikalyq modeldeu: Qamys formanty, Koemkej burdony zhaine Obertondyq rezonans</div>
 
-        <div class="sybyzghy-pipe" id="sybyzghyPipe">
-            <div class="ornament-node" data-freq="261.63"><span>I</span></div>
-            <div class="ornament-node" data-freq="293.66"><span>II</span></div>
-            <div class="ornament-node" data-freq="329.63"><span>III</span></div>
-            <div class="ornament-node" data-freq="392.00"><span>IV</span></div>
-            <div class="ornament-node" data-freq="440.00"><span>V</span></div>
-            <div class="ornament-node" data-freq="523.25"><span>VI</span></div>
+        <canvas id="visualizer"></canvas>
+
+        <!-- Sybyzghy sūlbaty men ojuular -->
+        <div class="sybyzghy-flute">
+            <div class="ornament-hole" data-freq="220.00"><span class="oju">❖</span><span class="note-name">A3</span></div>
+            <div class="ornament-hole" data-freq="246.94"><span class="oju">❖</span><span class="note-name">B3</span></div>
+            <div class="ornament-hole" data-freq="277.18"><span class="oju">❖</span><span class="note-name">C#4</span></div>
+            <div class="ornament-hole" data-freq="293.66"><span class="oju">❖</span><span class="note-name">D4</span></div>
+            <div class="ornament-hole" data-freq="329.63"><span class="oju">❖</span><span class="note-name">E4</span></div>
+            <div class="ornament-hole" data-freq="369.99"><span class="oju">❖</span><span class="note-name">F#4</span></div>
+            <div class="ornament-hole" data-freq="440.00"><span class="oju">❖</span><span class="note-name">A4</span></div>
         </div>
 
-        <div class="slider-section">
-            <span class="slider-label">Aua ağyny men Jiilikti tegis basqaru</span>
-            <input type="range" id="pitchSlider" min="200" max="600" value="440" step="1">
+        <div class="controls-grid">
+            <div class="control-group">
+                <span class="control-label">Uirleu kuishi (Oberton): <strong id="breathVal">65%</strong></span>
+                <input type="range" id="breathSlider" min="20" max="100" value="65">
+            </div>
+
+            <div class="control-group">
+                <span class="control-label">Auua syryly (Turbulence): <strong id="noiseVal">50%</strong></span>
+                <input type="range" id="noiseSlider" min="10" max="100" value="50">
+            </div>
+
+            <div class="control-group full-width">
+                <span class="control-label">Zhiilikti tegis buraau (Pitch Bend): <strong id="pitchVal">294 Hz</strong></span>
+                <input type="range" id="pitchSlider" min="180" max="550" value="294" step="1">
+            </div>
         </div>
 
-        <div class="info-box">
-            Ojuulardy basıp, tabigi sybyzghynyñ üni men syryldauın tolyq seziñiz.
+        <div class="toggle-row">
+            <span style="font-size: 0.8rem; color: var(--secondary-text);">Daisuirlji Koemkej Burdony (Throat Drone - 146.8 Hz):</span>
+            <button id="droneBtn" class="btn-toggle active">Qosuly</button>
+        </div>
+
+        <div class="info-footer">
+            Ojuulardy (bir nemese birnesheuin) basyp turygnyz. Kompjuterde <strong>1 - 7</strong> pernelerin basuugha da bolady.
         </div>
     </div>
 
     <script>
         let audioCtx = null;
         let masterGain = null;
-        let activeOscillatorsMap = new Map();
+        let analyser = null;
+        let formant1 = null;
+        let formant2 = null;
+        let droneEnabled = true;
+        let droneNodes = null;
+        let activeNotes = new Map();
+
+        // Parametrler
+        let breathPressure = 0.65;
+        let turbulenceAmount = 0.50;
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                
+
                 masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                masterGain.gain.setValueAtTime(0.45, audioCtx.currentTime);
 
-                // Tabigi tauda tartılğanday keñistikti jañğyryq (Delay Echo + Feedback Filter)
-                const delay = audioCtx.createDelay();
-                delay.delayTime.setValueAtTime(0.22, audioCtx.currentTime);
-                
-                const delayFeedback = audioCtx.createGain();
-                delayFeedback.gain.setValueAtTime(0.3, audioCtx.currentTime); // Jañğyryq qandylyğy
+                // 1. Qamys pen Aghash Formanttary (Wood/Reed Body Resonance)
+                formant1 = audioCtx.createBiquadFilter();
+                formant1.type = 'peaking';
+                formant1.frequency.setValueAtTime(780, audioCtx.currentTime);
+                formant1.Q.setValueAtTime(2.5, audioCtx.currentTime);
+                formant1.gain.setValueAtTime(5, audioCtx.currentTime);
 
-                const delayFilter = audioCtx.createBiquadFilter();
-                delayFilter.type = 'lowpass';
-                delayFilter.frequency.setValueAtTime(1500, audioCtx.currentTime); // Žūmsaq jañğyryq üşin süzgi
+                formant2 = audioCtx.createBiquadFilter();
+                formant2.type = 'peaking';
+                formant2.frequency.setValueAtTime(2150, audioCtx.currentTime);
+                formant2.Q.setValueAtTime(3.0, audioCtx.currentTime);
+                formant2.gain.setValueAtTime(4, audioCtx.currentTime);
 
-                masterGain.connect(delay);
-                delay.connect(delayFilter);
-                delayFilter.connect(delayFeedback);
-                delayFeedback.connect(delay);
+                // Zhumsaq kompressor (dybys shashyramauy uishin)
+                const compressor = audioCtx.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-18, audioCtx.currentTime);
+                compressor.ratio.setValueAtTime(4, audioCtx.currentTime);
 
-                masterGain.connect(audioCtx.destination);
-                delay.connect(audioCtx.destination);
+                // Analyser (Vizualizator uishin)
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 1024;
+
+                // Tau zhaghyryghy (Multi-tap Stereo Delay Reverb)
+                const delay1 = audioCtx.createDelay();
+                delay1.delayTime.setValueAtTime(0.19, audioCtx.currentTime);
+                const delay2 = audioCtx.createDelay();
+                delay2.delayTime.setValueAtTime(0.31, audioCtx.currentTime);
+
+                const feedback = audioCtx.createGain();
+                feedback.gain.setValueAtTime(0.32, audioCtx.currentTime);
+
+                const dampFilter = audioCtx.createBiquadFilter();
+                dampFilter.type = 'lowpass';
+                dampFilter.frequency.setValueAtTime(1400, audioCtx.currentTime);
+
+                // Tizbekti zhalghauu
+                masterGain.connect(formant1);
+                formant1.connect(formant2);
+                formant2.connect(compressor);
+
+                compressor.connect(analyser);
+                analyser.connect(audioCtx.destination);
+
+                // Reverb zholy
+                compressor.connect(delay1);
+                delay1.connect(dampFilter);
+                dampFilter.connect(delay2);
+                delay2.connect(feedback);
+                feedback.connect(delay1);
+                dampFilter.connect(analyser);
+
+                drawVisualizer();
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
         }
 
-        function startNote(nodeId, frequency) {
+        // Koemkej Burdony (Throat Drone)
+        function updateDroneState() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (droneEnabled && activeNotes.size > 0 && !droneNodes) {
+                const droneOsc = audioCtx.createOscillator();
+                droneOsc.type = 'sawtooth';
+                droneOsc.frequency.setValueAtTime(146.83, now); // D3 burdon
+
+                // Koemkej formanty
+                const throatFilter = audioCtx.createBiquadFilter();
+                throatFilter.type = 'lowpass';
+                throatFilter.frequency.setValueAtTime(340, now);
+                throatFilter.Q.setValueAtTime(4.5, now);
+
+                const droneGain = audioCtx.createGain();
+                droneGain.gain.setValueAtTime(0.001, now);
+                droneGain.gain.linearRampToValueAtTime(0.14, now + 0.25);
+
+                droneOsc.connect(throatFilter);
+                throatFilter.connect(droneGain);
+                droneGain.connect(masterGain);
+
+                droneOsc.start(now);
+                droneNodes = { osc: droneOsc, gain: droneGain };
+            } else if ((!droneEnabled || activeNotes.size === 0) && droneNodes) {
+                const nodes = droneNodes;
+                droneNodes = null;
+                nodes.gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+                setTimeout(() => {
+                    try { nodes.osc.stop(); } catch(e) {}
+                }, 220);
+            }
+        }
+
+        function startSybyzghyNote(nodeId, frequency) {
             initAudio();
-            if (activeOscillatorsMap.has(nodeId)) return;
+            if (activeNotes.has(nodeId)) return;
 
             const now = audioCtx.currentTime;
 
-            // Sybyzghyğa tängi terek obertondyq qatar (Sine + Triangleqospasy)
-            const freqs = [frequency, frequency * 2, frequency * 3, frequency * 4];
-            const gains = [1.0, 0.5, 0.22, 0.08];
-            let nodeElements = [];
+            // 1. "Chiff" — Bastapqy uirleu soqqysy (50ms auua shertuu)
+            const chiffDuration = 0.06;
+            const chiffBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * chiffDuration, audioCtx.sampleRate);
+            const chiffData = chiffBuffer.getChannelData(0);
+            for (let i = 0; i < chiffData.length; i++) {
+                chiffData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.02));
+            }
+            const chiffSource = audioCtx.createBufferSource();
+            chiffSource.buffer = chiffBuffer;
 
-            freqs.forEach((f, idx) => {
+            const chiffFilter = audioCtx.createBiquadFilter();
+            chiffFilter.type = 'bandpass';
+            chiffFilter.frequency.setValueAtTime(frequency * 2.2, now);
+            chiffFilter.Q.setValueAtTime(3.0, now);
+
+            const chiffGain = audioCtx.createGain();
+            chiffGain.gain.setValueAtTime(0.25 * turbulenceAmount, now);
+
+            chiffSource.connect(chiffFilter);
+            chiffFilter.connect(chiffGain);
+            chiffGain.connect(masterGain);
+            chiffSource.start(now);
+
+            // 2. Obertondyq qatar (Harmonics 1..6)
+            // Uirleu kuishi (breathPressure) zhogharylaghanda 2, 3, 4-obertondar kuishirek shyghady
+            const harmonics = [1, 2, 3, 4, 5, 6];
+            const baseWeights = [
+                1.0 - (breathPressure * 0.35),
+                0.55 * breathPressure,
+                0.40 * breathPressure,
+                0.20 * (breathPressure * breathPressure),
+                0.10 * (breathPressure * breathPressure),
+                0.05 * (breathPressure * breathPressure)
+            ];
+
+            let oscList = [];
+
+            // Tabighy Vibrato + Dem terbelisi
+            const vibrato = audioCtx.createOscillator();
+            vibrato.frequency.setValueAtTime(5.4, now);
+            const vibratoGain = audioCtx.createGain();
+            vibratoGain.gain.setValueAtTime(0.01, now);
+            // Vibrato dybys shyqqan sogn 0.3s kejin bayaulap kuishiedi (shynajy sybyzghyshy siiaqty)
+            vibratoGain.gain.linearRampToValueAtTime(4.2, now + 0.45);
+            vibrato.start(now);
+
+            harmonics.forEach((h, idx) => {
                 const osc = audioCtx.createOscillator();
-                // 1-garmonika syryldau üşin sine/triangle, qalğandarı sine
                 osc.type = idx === 0 ? 'triangle' : 'sine';
-                osc.frequency.setValueAtTime(f, now);
+                
+                // Bastapqy uirlegende zhiilik sail toeimennen koeteriledi (Pitch scoop)
+                const targetFreq = frequency * h;
+                osc.frequency.setValueAtTime(targetFreq * 0.985, now);
+                osc.frequency.exponentialRampToValueAtTime(targetFreq, now + 0.07);
+
+                vibratoGain.connect(osc.frequency);
 
                 const oscGain = audioCtx.createGain();
-                oscGain.gain.setValueAtTime(0, now);
-                oscGain.gain.linearRampToValueAtTime(gains[idx] * 0.28, now + 0.08);
+                oscGain.gain.setValueAtTime(0.001, now);
+                oscGain.gain.linearRampToValueAtTime(baseWeights[idx] * 0.25, now + 0.09);
 
                 osc.connect(oscGain);
                 oscGain.connect(masterGain);
                 osc.start(now);
-                nodeElements.push({ osc, gain: oscGain });
-            });
 
-            // 1. Aua syryldauı (Breathy Noise - qūbyr işindegi aua aģyny)
-            const bufferSize = audioCtx.sampleRate * 2;
-            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = (Math.random() * 2 - 1);
+                oscList.push({ osc, gain: oscGain, harmonic: h });
+            });
+            vibrato.connect(vibratoGain);
+
+            // 3. Turaqty Auua Syryly (Filtered Pink-like Breath Noise)
+            const noiseLen = audioCtx.sampleRate * 2;
+            const noiseBuffer = audioCtx.createBuffer(1, noiseLen, audioCtx.sampleRate);
+            const out = noiseBuffer.getChannelData(0);
+            let b0 = 0, b1 = 0, b2 = 0;
+            for (let i = 0; i < noiseLen; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.997 * b0 + white * 0.029;
+                b1 = 0.985 * b1 + white * 0.032;
+                b2 = 0.950 * b2 + white * 0.048;
+                out[i] = (b0 + b1 + b2 + white * 0.05) * 3.5;
             }
 
-            const whiteNoise = audioCtx.createBufferSource();
-            whiteNoise.buffer = noiseBuffer;
-            whiteNoise.loop = true;
+            const breathNoise = audioCtx.createBufferSource();
+            breathNoise.buffer = noiseBuffer;
+            breathNoise.loop = true;
 
-            const noiseFilter = audioCtx.createBiquadFilter();
-            noiseFilter.type = 'bandpass';
-            noiseFilter.frequency.setValueAtTime(frequency * 1.6, now);
-            noiseFilter.Q.setValueAtTime(6.0, now); // Tarınyñ rezonansy
+            // Tuutik rezonansy men syryl suizgisi
+            const tubeNoiseFilter = audioCtx.createBiquadFilter();
+            tubeNoiseFilter.type = 'bandpass';
+            tubeNoiseFilter.frequency.setValueAtTime(frequency * 1.5, now);
+            tubeNoiseFilter.Q.setValueAtTime(4.5, now);
 
             const noiseGain = audioCtx.createGain();
-            noiseGain.gain.setValueAtTime(0, now);
-            noiseGain.gain.linearRampToValueAtTime(0.06, now + 0.1);
+            noiseGain.gain.setValueAtTime(0.001, now);
+            noiseGain.gain.linearRampToValueAtTime(0.18 * turbulenceAmount, now + 0.08);
 
-            whiteNoise.connect(noiseFilter);
-            noiseFilter.connect(noiseGain);
+            breathNoise.connect(tubeNoiseFilter);
+            tubeNoiseFilter.connect(noiseGain);
             noiseGain.connect(masterGain);
-            whiteNoise.start(now);
+            breathNoise.start(now);
 
-            // 2. Tabigi mikrotolqyn (Micro-vibrato jan beru)
-            const vibrato = audioCtx.createOscillator();
-            vibrato.frequency.setValueAtTime(5.8, now);
-            const vibratoGain = audioCtx.createGain();
-            vibratoGain.gain.setValueAtTime(3.8, now);
-            
-            nodeElements.forEach(item => {
-                vibrato.connect(item.osc.frequency);
+            activeNotes.set(nodeId, {
+                baseFreq: frequency,
+                oscList,
+                breathNoise,
+                noiseGain,
+                tubeNoiseFilter,
+                vibrato
             });
-            vibrato.start(now);
 
-            activeOscillatorsMap.set(nodeId, {
-                elements: nodeElements,
-                noise: whiteNoise,
-                noiseGain: noiseGain,
-                vibrato: vibrato
-            });
+            updateDroneState();
         }
 
-        function stopNote(nodeId) {
-            if (activeOscillatorsMap.has(nodeId) && audioCtx) {
-                const now = audioCtx.currentTime;
-                const noteData = activeOscillatorsMap.get(nodeId);
+        function stopSybyzghyNote(nodeId) {
+            if (!activeNotes.has(nodeId) || !audioCtx) return;
+            const now = audioCtx.currentTime;
+            const note = activeNotes.get(nodeId);
+            activeNotes.delete(nodeId);
 
-                noteData.elements.forEach(item => {
-                    item.gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
-                });
-                noteData.noiseGain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+            note.oscList.forEach(item => {
+                item.gain.gain.setTargetAtTime(0.0001, now, 0.04);
+            });
+            note.noiseGain.gain.setTargetAtTime(0.0001, now, 0.04);
 
-                setTimeout(() => {
-                    try {
-                        noteData.elements.forEach(item => item.osc.stop());
-                        noteData.noise.stop();
-                        noteData.vibrato.stop();
-                    } catch(e) {}
-                    activeOscillatorsMap.delete(nodeId);
-                }, 130);
-            }
+            setTimeout(() => {
+                try {
+                    note.oscList.forEach(item => item.osc.stop());
+                    note.breathNoise.stop();
+                    note.vibrato.stop();
+                } catch(e) {}
+            }, 180);
+
+            updateDroneState();
         }
 
-        document.querySelectorAll('.ornament-node').forEach((node, index) => {
-            const freq = parseFloat(node.getAttribute('data-freq'));
-            const nodeId = 'node_' + index;
+        // Ojuulargha basuu oqighalary
+        const holes = document.querySelectorAll('.ornament-hole');
+        holes.forEach((hole, index) => {
+            const freq = parseFloat(hole.getAttribute('data-freq'));
+            const nodeId = 'hole_' + index;
 
-            const handleStart = (e) => {
+            const start = (e) => {
                 e.preventDefault();
-                node.classList.add('active');
-                startNote(nodeId, freq);
-                document.getElementById('pitchSlider').value = freq;
+                hole.classList.add('active');
+                startSybyzghyNote(nodeId, freq);
+                document.getElementById('pitchSlider').value = Math.round(freq);
+                document.getElementById('pitchVal').textContent = Math.round(freq) + ' Hz';
             };
 
-            const handleEnd = (e) => {
+            const end = (e) => {
                 e.preventDefault();
-                node.classList.remove('active');
-                stopNote(nodeId);
+                hole.classList.remove('active');
+                stopSybyzghyNote(nodeId);
             };
 
-            node.addEventListener('touchstart', handleStart);
-            node.addEventListener('touchend', handleEnd);
-            node.addEventListener('mousedown', handleStart);
-            node.addEventListener('mouseup', handleEnd);
-            node.addEventListener('mouseleave', () => {
-                if(node.classList.contains('active')) {
-                    node.classList.remove('active');
-                    stopNote(nodeId);
+            hole.addEventListener('touchstart', start);
+            hole.addEventListener('touchend', end);
+            hole.addEventListener('mousedown', start);
+            hole.addEventListener('mouseup', end);
+            hole.addEventListener('mouseleave', () => {
+                if (hole.classList.contains('active')) {
+                    hole.classList.remove('active');
+                    stopSybyzghyNote(nodeId);
                 }
             });
         });
 
-        const slider = document.getElementById('pitchSlider');
-        slider.addEventListener('input', (e) => {
-            const baseFreq = parseFloat(e.target.value);
-            activeOscillatorsMap.forEach((noteData, id) => {
-                const freqs = [baseFreq, baseFreq * 2, baseFreq * 3, baseFreq * 4];
-                noteData.elements.forEach((item, idx) => {
-                    if(audioCtx) {
-                        item.osc.frequency.setTargetAtTime(freqs[idx], audioCtx.currentTime, 0.04);
-                    }
+        // Kompjuter pernetaqtasy (1-7)
+        window.addEventListener('keydown', (e) => {
+            const idx = parseInt(e.key) - 1;
+            if (idx >= 0 && idx < holes.length) {
+                const hole = holes[idx];
+                if (!hole.classList.contains('active')) {
+                    hole.classList.add('active');
+                    const freq = parseFloat(hole.getAttribute('data-freq'));
+                    startSybyzghyNote('hole_' + idx, freq);
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const idx = parseInt(e.key) - 1;
+            if (idx >= 0 && idx < holes.length) {
+                const hole = holes[idx];
+                hole.classList.remove('active');
+                stopSybyzghyNote('hole_' + idx);
+            }
+        });
+
+        // Slajderlerdi basqaruu
+        document.getElementById('breathSlider').addEventListener('input', (e) => {
+            breathPressure = parseInt(e.target.value) / 100;
+            document.getElementById('breathVal').textContent = e.target.value + '%';
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            activeNotes.forEach(note => {
+                const weights = [
+                    1.0 - (breathPressure * 0.35),
+                    0.55 * breathPressure,
+                    0.40 * breathPressure,
+                    0.20 * (breathPressure * breathPressure),
+                    0.10 * (breathPressure * breathPressure),
+                    0.05 * (breathPressure * breathPressure)
+                ];
+                note.oscList.forEach((item, idx) => {
+                    item.gain.gain.setTargetAtTime(weights[idx] * 0.25, now, 0.05);
                 });
             });
         });
+
+        document.getElementById('noiseSlider').addEventListener('input', (e) => {
+            turbulenceAmount = parseInt(e.target.value) / 100;
+            document.getElementById('noiseVal').textContent = e.target.value + '%';
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            activeNotes.forEach(note => {
+                note.noiseGain.gain.setTargetAtTime(0.18 * turbulenceAmount, now, 0.05);
+            });
+        });
+
+        document.getElementById('pitchSlider').addEventListener('input', (e) => {
+            const baseFreq = parseFloat(e.target.value);
+            document.getElementById('pitchVal').textContent = Math.round(baseFreq) + ' Hz';
+            if (!audioCtx) return;
+            constNow = audioCtx.currentTime;
+            activeNotes.forEach(note => {
+                note.oscList.forEach(item => {
+                    item.osc.frequency.setTargetAtTime(baseFreq * item.harmonic, constNow, 0.04);
+                });
+                note.tubeNoiseFilter.frequency.setTargetAtTime(baseFreq * 1.5, constNow, 0.04);
+            });
+        });
+
+        // Koemkej burdony batyrmasy
+        const droneBtn = document.getElementById('droneBtn');
+        droneBtn.addEventListener('click', () => {
+            droneEnabled = !droneEnabled;
+            droneBtn.classList.toggle('active', droneEnabled);
+            droneBtn.textContent = droneEnabled ? 'Qosuly' : 'Oeshiruuli';
+            updateDroneState();
+        });
+
+        // Vizualizator (Oscilloscope)
+        function drawVisualizer() {
+            const canvas = document.getElementById('visualizer');
+            const ctx = canvas.getContext('2d');
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function render() {
+                requestAnimationFrame(render);
+                analyser.getByteTimeDomainData(dataArray);
+
+                ctx.fillStyle = '#090d0a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#d4af37';
+                ctx.beginPath();
+
+                const sliceWidth = canvas.width * 1.0 / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = v * canvas.height / 2;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+
+                ctx.lineTo(canvas.width, canvas.height / 2);
+                ctx.stroke();
+            }
+            render();
+        }
     </script>
 </body>
 </html>
