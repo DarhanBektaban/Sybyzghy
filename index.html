@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>www.sybyzghy.com — Akustikalyq Zerthana (v2.0 Lab)</title>
+    <title>SYBYZGHY — Aiuuendik Zerthana (v2.0 Lab)</title>
     <style>
         :root {
             --bg-color: #060907;
@@ -272,7 +272,7 @@
         <div class="lab-header">
             <div class="lab-title">
                 <h1>www.sybyzghy.com</h1>
-                <span>Sandyq-akustikalyq fizika zerthanasy (v2.0 Lab)</span>
+                <span>Sandyq aiuuendik zerthanasy (v2.0 Lab)</span>
             </div>
             <div class="telemetry-badge" id="telemetryText">
                 f₀: 263.8 Hz | L: 64.0 sm | d: 16 mm
@@ -306,7 +306,7 @@
         <div class="lab-grid">
             <div class="param-card">
                 <div class="param-header">
-                    <span>Tuutik uzyndyghy (L):</span>
+                    <span>Tuitik uzyndyghy (L):</span>
                     <strong id="lenVal">64.0 sm</strong>
                 </div>
                 <input type="range" id="lengthSlider" min="45" max="85" value="64" step="0.5">
@@ -314,7 +314,7 @@
 
             <div class="param-card">
                 <div class="param-header">
-                    <span>Ishki diametri (d):</span>
+                    <span>Ishki uoilshemi (d):</span>
                     <strong id="diaVal">16 mm</strong>
                 </div>
                 <input type="range" id="diaSlider" min="10" max="26" value="16" step="1">
@@ -322,7 +322,7 @@
 
             <div class="param-card">
                 <div class="param-header">
-                    <span>Uirleu qysymy (Overblow):</span>
+                    <span>Uirleuu qysymy (Overblow):</span>
                     <strong id="breathVal">60%</strong>
                 </div>
                 <input type="range" id="breathSlider" min="15" max="100" value="60">
@@ -340,20 +340,20 @@
         <div class="select-row">
             <select id="materialSelect">
                 <option value="reed">Material: Quuraj / Qamys (Zhumsaq, qognyr)</option>
-                <option value="wood">Material: Qaragaj / Qajygn (Orta rezonans)</option>
-                <option value="brass">Material: Zhez tuutik (Ashyq, zhogharghy oberton)</option>
+                <option value="wood">Material: Qaraghaj / Qajygn (Orta terbelis)</option>
+                <option value="brass">Material: Zhez tuitik (Ashyq, zhogharghy oberton)</option>
             </select>
 
             <select id="scaleSelect">
-                <option value="just">Qatar: Tabighy Oberton (Just Intonation)</option>
-                <option value="tet">Qatar: 12-TET (Tegngerilgen shkala)</option>
+                <option value="just">Qatar: Tabjghj Oberton (Just Intonation)</option>
+                <option value="tet">Qatar: 12-TET (Tegngerilgen bagham)</option>
             </select>
 
-            <button id="droneToggle" class="lab-btn active">Koemkej Burdony: Qosuly</button>
+            <button id="droneToggle" class="lab-btn active">Kuoimkej Burdony: Qosuuly</button>
         </div>
 
         <div class="formula-bar">
-            <span>Fizikalyq model: f₀ = c / [2 * (L + 0.6d)] (c = 343 m/s)</span>
+            <span>Pishindik model: f₀ = c / [2 * (L + 0.6d)] (c = 343 m/s)</span>
             <span id="activeHarmonicsText">Perneler: 1 - 7 nemese ojuudy basygnyz</span>
         </div>
     </div>
@@ -744,7 +744,7 @@
         droneBtn.addEventListener('click', () => {
             droneOn = !droneOn;
             droneBtn.classList.toggle('active', droneOn);
-            droneBtn.textContent = droneOn ? 'Koemkej Burdony: Qosuly' : 'Koemkej Burdony: Oeshiruuli';
+            droneBtn.textContent = droneOn ? 'Kuoimkej Burdony: Qosuuly' : 'Kuoimkej Burdony: Uoishiruuli';
             manageDrone();
         });
 
